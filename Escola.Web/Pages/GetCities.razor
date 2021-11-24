@@ -1,0 +1,47 @@
+﻿@page "/cities"
+
+<PageTitle>Cidades</PageTitle>
+
+@using Escola.Web.Data
+
+<h1>Cidades</h1>
+
+<p><a href="addcity">Adicionar Cidade</a></p>
+
+@if (cities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cidade</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var city in cities)
+            {
+                <tr>
+                    <td>@city.Name</td>
+                    <td>@city.Region</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<City>? cities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = new JsonServiceClient("https://localhost:7278");
+
+        var response = await client.GetAsync(new QueryCitiesCommand());
+
+        cities = response.Results;
+    }
+}

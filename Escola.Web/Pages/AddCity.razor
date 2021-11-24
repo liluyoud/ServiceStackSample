@@ -1,0 +1,49 @@
+﻿@page "/addcity"
+
+<PageTitle>Cidades</PageTitle>
+
+@using Escola.Web.Data
+
+<h1>Adicionar Cidades</h1>
+<EditForm Model="@city" OnValidSubmit="Save">
+    <label for="name">Cidade</label> 
+    <InputText id="name" @bind-Value="city.Name" class="form-control" />
+
+    <label for="region">Estado</label> 
+    <InputText id="region" @bind-Value="city.Region" class="form-control" />
+
+    <hr />
+
+    <button type="submit" disabled="@isSaving" class="btn btn-info">Salvar</button>
+</EditForm>
+
+
+
+@code {
+    private City? city = new City();
+    bool isSaving;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected void Save()
+    {
+        isSaving = true;
+        var client = new JsonServiceClient("https://localhost:7278");
+        client.Post(new Authenticate {
+            provider = CredentialsAuthProvider.Name,
+            UserName = "admin",
+            Password = "Sapiens@123",
+            RememberMe = true
+        });
+
+        var result = client.Post(new CreateCityCommand
+        {
+            Name = city.Name,   
+            Region = city.Region
+        });
+    }
+
+}
